@@ -1,0 +1,27 @@
+{
+  "name": "node_template",
+  "version": "1.0.0",
+  "description": "node basic template with observability",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node src/server.js",
+    "test": "echo \"No tests yet\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/back-sungchae/node_template.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/back-sungchae/node_template/issues"
+  },
+  "homepage": "https://github.com/back-sungchae/node_template#readme",
+  "dependencies": {
+    "express": "^4.19.2",
+    "winston": "^3.13.0",
+    "prom-client": "^15.1.3"
+  }
+}
