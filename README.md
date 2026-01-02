@@ -24,8 +24,14 @@ node_template/
 │   │   │   └── error_handler.js
 │   │   │
 │   │   ├── modules/
-│   │   │   └── health/
-│   │   │       └── health.controller.js
+│   │   │   ├── health/
+│   │   │   │   └── health.controller.js
+│   │   │   ├── mysql/
+│   │   │   │   └── mysql.js
+│   │   │   ├── redis/
+│   │   │   │   └── redis.js
+│   │   │   └── cache/
+│   │   │       └── cache_mysql.js
 │   │   │
 │   │   ├── routes/
 │   │   │   └── index.js
@@ -56,6 +62,54 @@ node_template/
 │       └── config.yaml
 │
 └── README.md
+```
+
+### MySQL + Redis 캐시 모듈
+
+기본 조회는 `cached_mysql_query`를 사용해서 Redis 캐시를 먼저 확인하고, 없으면 MySQL 조회 후 캐시에 저장합니다.
+
+파일 위치
+• app/src/modules/mysql/mysql.js
+• app/src/modules/redis/redis.js
+• app/src/modules/cache/cache_mysql.js
+
+예시 (캐시 먼저 조회)
+
+```
+import { cached_mysql_query } from "../modules/cache/cache_mysql.js";
+
+async function get_user(user_id) {
+  return cached_mysql_query({
+    cache_key: `user:${user_id}`,
+    ttl_seconds: 60,
+    mysql_input: { table: "users", where: { id: user_id } },
+  });
+}
+```
+
+Lazy Loading (캐시 미스 시 백그라운드 채움)
+
+```
+const data = await cached_mysql_query({
+  cache_key: `user:${user_id}`,
+  ttl_seconds: 60,
+  mysql_input: { table: "users", where: { id: user_id } },
+  lazy: true,
+});
+```
+
+MySQL 단독 사용
+
+```
+import { mysql_query } from "../modules/mysql/mysql.js";
+
+const rows = await mysql_query("SELECT * FROM users WHERE id = ?", [user_id]);
+```
+
+Redis 단독 사용 (pub/sub, streams, hash, set 포함)
+
+```
+import { redis_publish, redis_stream_add } from "../modules/redis/redis.js";
 ```
 
 ### Prometheus
